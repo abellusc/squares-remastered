@@ -3,9 +3,9 @@ const path = require('path');
 module.exports = {
   mode: "development",
   devtool: "inline-source-map",
-  entry: "./src/index.ts",
+  entry: "./src/game/game.ts",
   output: {
-    filename: "dist/bundle.js"
+    filename: "bundle.js"
   },
   resolve: {
     // Add `.ts` and `.tsx` as a resolvable extension.
