@@ -74,25 +74,42 @@ function run() {
 
     let frame = 0;
     let powerupsOnBoard = 0;
+    let bestScore = 0;
     setInterval(() => {
         context!.canvas.width = window.innerWidth;
         context!.canvas.height = window.innerHeight;
         context?.clearRect(0, 0, context.canvas.width + (state.player.getMultiplier() * 5), context.canvas.height + (state.player.getMultiplier() * 5));
 
-        context!.fillStyle = '#dddddd';
-        context!.textAlign = 'center';
-        context!.font = "36px Arial";
-        context!.fillText(`${state.score}`, (context.canvas.width) / 2, (context.canvas.height - 40) / 2);
-
         if (!state.started) {
+            context!.fillStyle = '#dddddd';
             if (state.score > 0) {
+                context!.fillStyle = '#dddddd';
+                context!.textAlign = 'center';
+                context!.font = "36px Arial";
+                context!.fillText(`${state.score}`, (context.canvas.width) / 2, (context.canvas.height - 40) / 2);
+
                 context!.font = "18px Arial";
                 context!.fillStyle = '#ff0000';
                 context!.textAlign = 'center';
                 context!.fillText(`game over`, context.canvas.width / 2, context.canvas.height / 2);
                 context!.fillStyle = '#000000';
                 context!.fillText(`click anywhere to start...`, context.canvas.width / 2, (context.canvas.height + 40) / 2);
+
+                if (state.score > bestScore) {
+                    bestScore = state.score;
+                }
+
+                context!.font = "10px Arial";
+                context!.fillStyle = '#ff0000';
+                context!.textAlign = 'center';
+                context!.fillText(`game over`, context.canvas.width / 2, context.canvas.height / 2);
+                context!.fillStyle = '#000000';
+                context!.fillText(`best score: ${bestScore}`, context.canvas.width / 2, (context.canvas.height + 80) / 2);
+
             } else {
+                context.textAlign = 'center';
+                context!.font = '72px Arial';
+                context!.fillText('squares: remastered', context.canvas.width / 2, context.canvas.height / 2 - 100)
                 context!.font = "18px Arial";
                 context!.textAlign = 'center';
                 context!.fillText(`click anywhere to start...`, context.canvas.width / 2, context.canvas.height / 2);
@@ -100,6 +117,11 @@ function run() {
             }
             return;
         }
+
+        context!.fillStyle = '#dddddd';
+        context!.textAlign = 'center';
+        context!.font = "36px Arial";
+        context!.fillText(`${state.score}`, (context.canvas.width) / 2, (context.canvas.height - 40) / 2);
 
         if (frame % Math.floor(10 / myMusic.playbackRate) === 0) {
             for (let i = 0; i < Math.floor((3 * myMusic.playbackRate)) - 1; i++) {
