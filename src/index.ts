@@ -20,7 +20,7 @@ let state: IApplicationState = {
     pickups: [],
     score: 0,
     multiplier: 1,
-    invincible: false,
+    invincible: 0,
 };
 
 function onMouseMove(ev: MouseEvent) {
@@ -59,7 +59,7 @@ function drawVisualizer() {
     const ctx = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d');
 
     ctx!.strokeStyle = getRandomColor();
-    ctx!.moveTo(ctx.canvas.width / 2, ctx.canvas.height / 2);
+    ctx!.moveTo(state.player.position[0] + ((state.player.getMultiplier() * 2 + 10) / 2), state.player.position[1] + ((state.player.getMultiplier() * 2 + 10) / 2));
     const target = state.pickups[Math.floor(Math.random() * state.pickups.length)];
     ctx!.lineTo(target.position[0], target.position[1]);
     ctx!.stroke();
@@ -76,6 +76,7 @@ function run() {
     let powerupsOnBoard = 0;
     let bestScore = 0;
     setInterval(() => {
+        const renderTime = new Date().getTime();
         context!.canvas.width = window.innerWidth;
         context!.canvas.height = window.innerHeight;
         context!.fillStyle = '#000000';
@@ -131,8 +132,8 @@ function run() {
         context!.fillStyle = '#dddddd';
         context!.font = '12px Arial';
         context!.fillText(`${state.multiplier}x combo`, context.canvas.width / 2, (context.canvas.height - 15) / 2);
-        if (state.invincible) {
-            context!.fillText(`INVINCIBLE!`, context.canvas.width / 2, (context.canvas.height + 30) / 2);
+        if (state.invincible > renderTime) {
+            context!.fillText(`INVINCIBLE! (${(Math.floor((state.invincible - renderTime) / 1000))} seconds remaining)`, context.canvas.width / 2, (context.canvas.height + 30) / 2);
         }
 
         let newState = {
@@ -144,6 +145,13 @@ function run() {
         newState = {
             ...newState,
             ...newState.player.update(state),
+        }
+
+
+        if (state.invincible > renderTime) {
+            newState.player.color = getRandomColor();
+        } else {
+            newState.player.color = '#aaaaaa';
         }
 
 
@@ -206,7 +214,7 @@ function run() {
             ) {
                 // a collision happened...
                 if (pickup instanceof EnemyPickup) {
-                    if (!state.invincible) {
+                    if (state.invincible < renderTime) {
                         newState.multiplier = 1;
                         newState.started = false;
                         myMusic.pause();
@@ -222,10 +230,8 @@ function run() {
 
                     switch (n) {
                         case 0:
-                            newState.invincible = true;
-                            setTimeout(() => {
-                                state.invincible = false;                             
-                            }, 10000);
+                            newState.invincible = renderTime + 10000;
+                            break;
                     }
 
                     powerupsOnBoard--;
