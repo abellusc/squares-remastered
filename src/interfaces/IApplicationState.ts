@@ -8,4 +8,5 @@ export interface IApplicationState {
     multiplier: number;
     player: Player;
     pickups: (IPickup & IRenderable)[];
+    invincible: boolean;
 }

@@ -2,6 +2,7 @@ import { IApplicationState } from "./interfaces/IApplicationState";
 import { Player } from "./interfaces/Player";
 import { EnemyPickup } from "./interfaces/EnemyPickup";
 import { ScorePickup } from "./interfaces/ScorePickup";
+import { PowerPickup } from "./interfaces/PowerPickup";
 
 const FPS = 60;
 const context = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d');
@@ -19,6 +20,7 @@ let state: IApplicationState = {
     pickups: [],
     score: 0,
     multiplier: 1,
+    invincible: false,
 };
 
 function onMouseMove(ev: MouseEvent) {
@@ -54,10 +56,14 @@ function getRandomColor() {
 }
 
 function drawVisualizer() {
-    const ctx = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d')!;
+    const ctx = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d');
 
-    ctx.fillStyle = getRandomColor();
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx!.strokeStyle = getRandomColor();
+    ctx!.moveTo(ctx.canvas.width / 2, ctx.canvas.height / 2);
+    const target = state.pickups[Math.floor(Math.random() * state.pickups.length)];
+    ctx!.lineTo(target.position[0], target.position[1]);
+    ctx!.stroke();
+    ctx!.fillStyle = '#000000';
 }
 
 function run() {
@@ -66,9 +72,9 @@ function run() {
     window.addEventListener('mouseleave', (ev) => onMouseMove(ev));
     window.addEventListener('click', (ev) => onMouseClick(ev));
 
+    let frame = 0;
+    let powerupsOnBoard = 0;
     setInterval(() => {
-        drawVisualizer();
-
         context!.canvas.width = window.innerWidth;
         context!.canvas.height = window.innerHeight;
         context?.clearRect(0, 0, context.canvas.width + (state.player.getMultiplier() * 5), context.canvas.height + (state.player.getMultiplier() * 5));
@@ -95,8 +101,18 @@ function run() {
             return;
         }
 
+        if (frame % Math.floor(10 / myMusic.playbackRate) === 0) {
+            for (let i = 0; i < Math.floor((3 * myMusic.playbackRate)) - 1; i++) {
+                drawVisualizer();
+            }
+        }
+
+        context!.fillStyle = '#dddddd';
         context!.font = '12px Arial';
         context!.fillText(`${state.multiplier}x combo`, context.canvas.width / 2, (context.canvas.height - 15) / 2);
+        if (state.invincible) {
+            context!.fillText(`INVINCIBLE!`, context.canvas.width / 2, (context.canvas.height + 30) / 2);
+        }
 
         let newState = {
             ...state,
@@ -110,16 +126,31 @@ function run() {
         }
 
 
-        const type = Math.floor(Math.random() * 2);
+        const type = Math.floor(Math.random() * 10);
     
         if (state.pickups.length < MAX_PICKUPS) {
             for (let i = state.pickups.length; i < MAX_PICKUPS; i++) {
                 switch(type) {
                     case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
                         state.pickups.push(new EnemyPickup(state.score));
                         break;
-                    case 1:
+                    case 5:
+                    case 6:
+                    case 7:
+                    case 8:
                         state.pickups.push(new ScorePickup(state.score));
+                        break;
+                    case 9:
+                        if (powerupsOnBoard === 0) {
+                            state.pickups.push(new PowerPickup(state.score));
+                            powerupsOnBoard++;
+                        } else {
+                            state.pickups.push(new ScorePickup(state.score));
+                        }
                         break;
                 }
             }
@@ -154,14 +185,30 @@ function run() {
             ) {
                 // a collision happened...
                 if (pickup instanceof EnemyPickup) {
-                    newState.multiplier = 1;
-                    newState.started = false;
-                    myMusic.pause();
-                    gameOverSound.play();
-                } else {
-                    newState.score += 10 * newState.multiplier;
+                    if (!state.invincible) {
+                        newState.multiplier = 1;
+                        newState.started = false;
+                        myMusic.pause();
+                        gameOverSound.play();
+                    }
+                } else if (pickup instanceof ScorePickup) {
+                    newState.score += (30 - pickup.getRadius()) * newState.multiplier;
                     newState.multiplier += 1;
                     myMusic.playbackRate = myMusic.playbackRate + 0.05;
+                    pickupSound.play();
+                } else if (pickup instanceof PowerPickup) {
+                    const n = Math.floor(Math.random() * 1);
+
+                    switch (n) {
+                        case 0:
+                            newState.invincible = true;
+                            setTimeout(() => {
+                                state.invincible = false;                             
+                            }, 10000);
+                    }
+
+                    powerupsOnBoard--;
+
                     pickupSound.play();
                 }
                 newState.pickups = [ ...newState.pickups.slice(0, index), ...newState.pickups.slice(index + 1) ];
@@ -170,6 +217,11 @@ function run() {
 
             // if off screen
             if (pickup.position[0] >= context.canvas.width || pickup.position[1] >= context.canvas.height || pickup.position[0] <= 0 || pickup.position[1] <= 0) {
+
+                if (pickup instanceof PowerPickup) {
+                    powerupsOnBoard--;
+                }
+
                 newState.pickups = [ ...newState.pickups.slice(0, index), ...newState.pickups.slice(index + 1) ];
             }
 
@@ -179,6 +231,11 @@ function run() {
         }
 
         state = newState;
+        frame++;
+
+        if (frame >= FPS) {
+            frame = 0;
+        }
     }, 1000 / FPS);
 }
 

@@ -4,7 +4,7 @@ import { IApplicationState } from "./IApplicationState";
 
 const context = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d');
 
-export class ScorePickup implements IPickup, IRenderable {
+export class PowerPickup implements IPickup, IRenderable {
     position: [ number, number ] = [0, 0];
     velocity: [ number, number ] = [0, 0];
     points: number = 10;
@@ -12,7 +12,7 @@ export class ScorePickup implements IPickup, IRenderable {
 
     constructor(score: number) {
         const n = Math.floor(Math.random() * 4);
-        console.log('Creating a score pickup', n);
+        console.log('Creating a power pickup', n);
         if (n % 4 === 0) {
             this.position = [ Math.floor(Math.random() * context.canvas.width), 0];
             this.velocity = [0, this.getScoreVelocity(score)];
@@ -44,7 +44,7 @@ export class ScorePickup implements IPickup, IRenderable {
         // new position
         this.position = [ this.position[0] + this.velocity[0], this.position[1] + this.velocity[1] ];
 
-        context!.fillStyle = '#000000';
+        context!.fillStyle = '#0000ff';
         context!.fillRect(this.position[0], this.position[1], this.radius, this.radius);
         context!.fillStyle = '#000000';
         return state;
