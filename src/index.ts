@@ -78,7 +78,8 @@ function run() {
     setInterval(() => {
         context!.canvas.width = window.innerWidth;
         context!.canvas.height = window.innerHeight;
-        context?.clearRect(0, 0, context.canvas.width + (state.player.getMultiplier() * 5), context.canvas.height + (state.player.getMultiplier() * 5));
+        context!.fillStyle = '#000000';
+        context?.fillRect(0, 0, context.canvas.width + (state.player.getMultiplier() * 5), context.canvas.height + (state.player.getMultiplier() * 5));
 
         if (!state.started) {
             context!.fillStyle = '#dddddd';
@@ -100,10 +101,8 @@ function run() {
                 }
 
                 context!.font = "10px Arial";
-                context!.fillStyle = '#ff0000';
+                context!.fillStyle = '#dddddd';
                 context!.textAlign = 'center';
-                context!.fillText(`game over`, context.canvas.width / 2, context.canvas.height / 2);
-                context!.fillStyle = '#000000';
                 context!.fillText(`best score: ${bestScore}`, context.canvas.width / 2, (context.canvas.height + 80) / 2);
 
             } else {

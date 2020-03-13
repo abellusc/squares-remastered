@@ -44,7 +44,7 @@ export class ScorePickup implements IPickup, IRenderable {
         // new position
         this.position = [ this.position[0] + this.velocity[0], this.position[1] + this.velocity[1] ];
 
-        context!.fillStyle = '#000000';
+        context!.fillStyle = '#ffffff';
         context!.fillRect(this.position[0], this.position[1], this.radius, this.radius);
         context!.fillStyle = '#000000';
         return state;
