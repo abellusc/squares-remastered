@@ -1,5 +1,5 @@
 {
-  "name": "wrapper",
+  "name": "squares-remastered",
   "version": "0.1.0",
   "private": true,
   "dependencies": {},
@@ -27,5 +27,8 @@
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
   }
 }
