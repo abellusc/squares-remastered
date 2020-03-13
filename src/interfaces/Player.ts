@@ -8,12 +8,12 @@ export class Player implements IRenderable {
     private multiplier = 1;
 
     update(state: IApplicationState): IApplicationState {
-        context!.save();
-        context!.fillStyle = '#999999';
-    
-        context!.fillRect(this.position[0], this.position[1], this.multiplier * 2 + 10, this.multiplier * 2 + 10);
-        context!.fillStyle = '#000000';
-        context!.restore();
+        const ctx = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d');
+        ctx.save();
+        ctx!.fillStyle = '#999999';
+        ctx!.fillRect(this.position[0], this.position[1], this.multiplier * 2 + 10, this.multiplier * 2 + 10);
+        ctx!.fillStyle = '#000000';
+        ctx.restore();
         return state;
     }
 

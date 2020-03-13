@@ -8,23 +8,26 @@ export class ScorePickup implements IPickup, IRenderable {
     position: [ number, number ] = [0, 0];
     velocity: [ number, number ] = [0, 0];
     points: number = 10;
+    radius: number = 10;
 
     constructor(score: number) {
         const n = Math.floor(Math.random() * 4);
         console.log('Creating a score pickup', n);
         if (n % 4 === 0) {
-            this.position = [ Math.floor(Math.random() * 640), 0];
+            this.position = [ Math.floor(Math.random() * context.canvas.width), 0];
             this.velocity = [0, this.getScoreVelocity(score)];
         } else if (n % 4 === 1) {
-            this.position = [ 0, Math.floor(Math.random() * 480)];
+            this.position = [ 0, Math.floor(Math.random() * context.canvas.height)];
             this.velocity = [this.getScoreVelocity(score), 0];
         } else if (n % 4 === 2) {
-            this.position = [ 640, Math.floor(Math.random() * 480) ];
+            this.position = [ context.canvas.width, Math.floor(Math.random() * context.canvas.height) ];
             this.velocity = [-1 * this.getScoreVelocity(score), 0];
         } else if (n % 4 === 3) {
-            this.position = [ Math.floor(Math.random() * 640), 480 ];
+            this.position = [ Math.floor(Math.random() * context.canvas.width), context.canvas.height ];
             this.velocity = [0, -1 * this.getScoreVelocity(score)];
         }
+
+        this.radius = Math.floor(Math.random() * 20) + 10;
     }
 
     getScoreVelocity(score: number): number {
@@ -56,5 +59,9 @@ export class ScorePickup implements IPickup, IRenderable {
 
     getPosition(): [ number, number ] {
         return this.position;
+    }
+
+    getRadius(): number {
+        return this.radius;
     }
 }
