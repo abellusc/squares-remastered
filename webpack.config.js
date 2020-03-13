@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   mode: "development",
   devtool: "inline-source-map",
@@ -14,5 +16,10 @@ module.exports = {
       // all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`
       { test: /\.tsx?$/, loader: "ts-loader" }
     ]
+  },
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    compress: true,
+    port: process.env.PORT || 9999
   }
 };

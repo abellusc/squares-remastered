@@ -28,6 +28,6 @@
     "webpack-dev-server": "^3.10.3"
   },
   "engines": {
-    "node": "latest"
+    "node": "12.14.1"
   }
 }
