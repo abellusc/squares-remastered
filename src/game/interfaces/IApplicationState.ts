@@ -9,4 +9,5 @@ export interface IApplicationState {
     player: Player;
     pickups: (IPickup & IRenderable)[];
     invincible: number;
+    mini: number;
 }

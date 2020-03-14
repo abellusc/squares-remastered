@@ -6,7 +6,6 @@ import { PowerPickup } from "./interfaces/PowerPickup";
 
 const FPS = 60;
 const context = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d');
-const visualizerContext = (document.getElementById('visualizer') as HTMLCanvasElement).getContext('2d');
 const MAX_PICKUPS = 20;
 
 const myMusic = document.getElementById("music") as HTMLAudioElement;
@@ -21,6 +20,7 @@ let state: IApplicationState = {
     score: 0,
     multiplier: 1,
     invincible: 0,
+    mini: 0,
 };
 
 function onMouseMove(ev: MouseEvent) {
@@ -133,8 +133,12 @@ function run() {
         context!.font = '12px Arial';
         context!.fillText(`${state.multiplier}x combo`, context.canvas.width / 2, (context.canvas.height - 15) / 2);
         if (state.invincible > renderTime) {
-            context!.fillText(`INVINCIBLE! (${(Math.floor((state.invincible - renderTime) / 1000))} seconds remaining)`, context.canvas.width / 2, (context.canvas.height + 30) / 2);
+            context!.fillText(`INVINCIBLE! (${(Math.floor((state.invincible - renderTime) / 1000))})`, context.canvas.width / 2, (context.canvas.height + 30) / 2);
         }
+        if (state.mini > renderTime) {
+            context!.fillText(`MINI SQUARE! (${(Math.floor((state.mini - renderTime) / 1000))})`, context.canvas.width / 2, (context.canvas.height + 45) / 2);
+        }
+
 
         let newState = {
             ...state,
@@ -154,6 +158,7 @@ function run() {
             newState.player.color = '#aaaaaa';
         }
 
+        newState.player.mini = state.mini > renderTime;
 
         const type = Math.floor(Math.random() * 10);
     
@@ -226,12 +231,14 @@ function run() {
                     myMusic.playbackRate = myMusic.playbackRate + 0.05;
                     pickupSound.play();
                 } else if (pickup instanceof PowerPickup) {
-                    const n = Math.floor(Math.random() * 1);
+                    const n = Math.floor(Math.random() * 2);
 
                     switch (n) {
                         case 0:
                             newState.invincible = renderTime + 10000;
                             break;
+                        case 1:
+                            newState.mini = renderTime + 10000;
                     }
 
                     powerupsOnBoard--;

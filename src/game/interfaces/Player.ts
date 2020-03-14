@@ -22,12 +22,13 @@ export class Player implements IRenderable {
     position: [number, number] = [0, 0];
     private multiplier = 1;
     public color: string = '#aaaaaa';
+    public mini: boolean = false;
 
     update(state: IApplicationState): IApplicationState {
         const ctx = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d');
         ctx.save();
         ctx!.fillStyle = this.color;
-        ctx!.fillRect(this.position[0], this.position[1], this.multiplier * 2 + 10, this.multiplier * 2 + 10);
+        ctx!.fillRect(this.position[0], this.position[1], this.mini ? 10 : this.multiplier * 2 + 10, this.mini ? 10 : this.multiplier * 2 + 10);
         ctx!.fillStyle = '#000000';
         ctx.restore();
         return state;
