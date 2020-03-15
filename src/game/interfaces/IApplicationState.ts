@@ -10,4 +10,5 @@ export interface IApplicationState {
     pickups: (IPickup & IRenderable)[];
     invincible: number;
     mini: number;
+    shrink: boolean;
 }

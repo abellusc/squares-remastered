@@ -21,6 +21,7 @@ let state: IApplicationState = {
     multiplier: 1,
     invincible: 0,
     mini: 0,
+    shrink: false,
 };
 
 function onMouseMove(ev: MouseEvent) {
@@ -37,6 +38,13 @@ function onMouseClick(ev: MouseEvent) {
 
         myMusic.play();
         myMusic.playbackRate = 0.5;
+    } else if (state.score >= 10 && state.multiplier > 1) {
+        // is started, allow releasing of orbs
+        state.score = state.score - 10;
+        state.multiplier--;
+        state.player.setMultiplier(state.multiplier);
+
+        releaseScorePickup();
     }
 }
 
@@ -66,6 +74,25 @@ function drawVisualizer() {
     ctx!.fillStyle = '#000000';
 }
 
+function getRandomPositionOffsetFromPlayer(): [number, number] {
+    switch (Math.floor(Math.random() * 8)) {
+        case 0: return [10, 0];
+        case 1: return [10, 10];
+        case 2: return [10, -10];
+        case 3: return [0, 10];
+        case 4: return [0, -10];
+        case 5: return [-10, -10];
+    }
+}
+
+function releaseScorePickup(): void {
+    const offset = getRandomPositionOffsetFromPlayer();
+    state.pickups.push(new ScorePickup(state.score, [
+        state.player.position[0] + offset[0],
+        state.player.position[1] + offset[1]
+    ], offset));
+}
+
 function run() {
     window.addEventListener('mousemove', (ev) => onMouseMove(ev));
     window.addEventListener('mouseenter', (ev) => onMouseMove(ev));
@@ -75,6 +102,7 @@ function run() {
     let frame = 0;
     let powerupsOnBoard = 0;
     let bestScore = 0;
+
     setInterval(() => {
         const renderTime = new Date().getTime();
         context!.canvas.width = window.innerWidth;
@@ -132,12 +160,16 @@ function run() {
         context!.fillStyle = '#dddddd';
         context!.font = '12px Arial';
         context!.fillText(`${state.multiplier}x combo`, context.canvas.width / 2, (context.canvas.height - 15) / 2);
+        
+        let powers = [];
         if (state.invincible > renderTime) {
-            context!.fillText(`INVINCIBLE! (${(Math.floor((state.invincible - renderTime) / 1000))})`, context.canvas.width / 2, (context.canvas.height + 30) / 2);
+            powers.push(`GOD MODE (${(Math.floor((state.invincible - renderTime) / 1000))})`);
         }
         if (state.mini > renderTime) {
-            context!.fillText(`MINI SQUARE! (${(Math.floor((state.mini - renderTime) / 1000))})`, context.canvas.width / 2, (context.canvas.height + 45) / 2);
+            powers.push(`MINI MODE (${(Math.floor((state.mini - renderTime) / 1000))})`);
         }
+
+        context!.fillText(powers.join(' | '), context.canvas.width / 2, (context.canvas.height + 45) / 2);
 
 
         let newState = {
