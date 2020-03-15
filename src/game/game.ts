@@ -208,8 +208,8 @@ function run() {
             const y2t = pickup.position[1];
 
             // bottom of bounding box
-            const x1b = newState.player.getPosition()[0] + (state.multiplier * 2 + 10);
-            const y1b = newState.player.getPosition()[1] + (state.multiplier * 2 + 10);
+            const x1b = newState.player.getPosition()[0] + (newState.player.mini ? 10 : (state.multiplier * 2 + 10));
+            const y1b = newState.player.getPosition()[1] + (newState.player.mini ? 10 : (state.multiplier * 2 + 10));
 
             const x2b = pickup.position[0] + pickup.getRadius();
             const y2b = pickup.position[1] + pickup.getRadius();
