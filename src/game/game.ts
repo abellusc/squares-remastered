@@ -59,7 +59,7 @@ function drawVisualizer() {
     const ctx = (document.getElementById('canvas') as HTMLCanvasElement).getContext('2d');
 
     ctx!.strokeStyle = getRandomColor();
-    ctx!.moveTo(state.player.position[0] + ((state.player.getMultiplier() * 2 + 10) / 2), state.player.position[1] + ((state.player.getMultiplier() * 2 + 10) / 2));
+    ctx!.moveTo(state.player.position[0] + ((state.player.mini ? 10 : state.player.getMultiplier() * 2 + 10) / 2), state.player.position[1] + ((state.player.mini ? 10 : state.player.getMultiplier() * 2 + 10) / 2));
     const target = state.pickups[Math.floor(Math.random() * state.pickups.length)];
     ctx!.lineTo(target.position[0], target.position[1]);
     ctx!.stroke();
