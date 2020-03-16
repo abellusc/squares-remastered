@@ -41,6 +41,12 @@ function onMouseMove(ev: MouseEvent) {
     }
 }
 
+function onTouchMove(ev: TouchEvent) {
+    if (ev.touches.item(0).clientX >= 0 && ev.touches.item(0).clientY >= 0 && ev.touches.item(0).clientX <= context.canvas.width - (state.player.getMultiplier() * 2 + 10) && ev.touches.item(0).clientY <= context.canvas.height - (state.player.getMultiplier() * 2 + 10)) {
+        state.player.setPosition(ev.touches.item(0).clientX, ev.touches.item(0).clientY);
+    }
+}
+
 function onMouseClick(ev: MouseEvent) {
     if (!state.started) {
         state.roundsPlayed++;
@@ -117,6 +123,9 @@ function run() {
     window.addEventListener('mousedown', (ev) => onMouseMove(ev));
     window.addEventListener('mouseenter', (ev) => onMouseMove(ev));
     window.addEventListener('mouseleave', (ev) => onMouseMove(ev));
+    window.addEventListener('touchstart', (ev) => onTouchMove(ev));
+    window.addEventListener('touchend', (ev) => onTouchMove(ev));
+    window.addEventListener('touchmove', (ev) => onTouchMove(ev));
     window.addEventListener('click', (ev) => onMouseClick(ev));
     window.addEventListener('dblclick', (ev) => onMouseDoubleClick(ev));
 
@@ -330,8 +339,4 @@ function run() {
     }, 1000 / FPS);
 }
 
-if (window.innerWidth < 768) {
-    alert('this game is not supported on mobile.');
-} else {
-    run();
-}
+run();
