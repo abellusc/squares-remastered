@@ -117,13 +117,29 @@ function releaseScorePickup(): void {
     ], offset));
 }
 
+function onTouchStart(ev: TouchEvent) {
+    if (!state.started) {
+        state.roundsPlayed++;
+        state.score = 0;
+        state.multiplier = 1;
+        state.mini = 0;
+        state.invincible = 0;
+        state.started = true;
+
+        myMusic.play();
+        myMusic.playbackRate = 0.5;
+    } else {
+        onTouchMove(ev);
+    }
+}
+
 function run() {
     window.addEventListener('mousemove', (ev) => onMouseMove(ev));
     window.addEventListener('mouseup', (ev) => onMouseMove(ev));
     window.addEventListener('mousedown', (ev) => onMouseMove(ev));
     window.addEventListener('mouseenter', (ev) => onMouseMove(ev));
     window.addEventListener('mouseleave', (ev) => onMouseMove(ev));
-    window.addEventListener('touchstart', (ev) => onTouchMove(ev));
+    window.addEventListener('touchstart', (ev) => onTouchStart(ev));
     window.addEventListener('touchend', (ev) => onTouchMove(ev));
     window.addEventListener('touchmove', (ev) => onTouchMove(ev));
     window.addEventListener('click', (ev) => onMouseClick(ev));
